@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        imageView = findViewById (R.id.result) as ImageView?;
+        imageView = findViewById(R.id.result) as ImageView?;
     }
 
     fun listPodcasts(view: View) {
@@ -34,17 +34,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        var stream = null;
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
-
-        // recyle unused bitmaps
-            if (bitmap != null) {
+        when {
+            requestCode != REQUEST_CODE -> return
+            resultCode != Activity.RESULT_OK -> return
+            else -> {
                 bitmap?.recycle();
+                val stream = getContentResolver().openInputStream(data?.getData())
+                bitmap = BitmapFactory.decodeStream(stream)
+                imageView?.setImageBitmap(bitmap);
             }
-        val openInputStream = getContentResolver().openInputStream(data?.getData())
-        stream = openInputStream as Nothing?
-        bitmap = BitmapFactory.decodeStream(stream)
-        imageView?.setImageBitmap(bitmap);
-
+        }
     }
 }

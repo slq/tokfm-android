@@ -1,46 +1,85 @@
 package com.slq.tokfm
 
-import android.app.Activity
-import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.hardware.Camera
+import android.hardware.Camera.CameraInfo
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.R.attr.data
-import android.provider.MediaStore
-import android.support.v4.app.NotificationCompat.getExtras
+import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val REQUEST_CODE = 1
-    private var bitmap: Bitmap? = null
-    private var imageView: ImageView? = null
+    private var camera: Camera? = null
+    private var cameraId = 0
+    private var photoHandler: PhotoHandler? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        imageView = findViewById(R.id.result) as ImageView?;
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // do we have a camera?
+        if (!getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
+                    .show();
+        } else {
+            cameraId = findFrontFacingCamera();
+            if (cameraId < 0) {
+                Toast.makeText(this, "No front facing camera found.",
+                        Toast.LENGTH_LONG).show();
+            } else {
+
+
+                if (camera != null) {
+                    camera?.release();
+                    camera = null;
+                }
+                camera = Camera.open(cameraId);
+            }
+        }
+
+        photoHandler = PhotoHandler(getApplicationContext())
+
     }
 
     fun listPodcasts(view: View) {
         Log.d("LIST PODCASTS", "listPodcasts called!")
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        startActivityForResult(Intent.createChooser(intent,"Select Picture"), REQUEST_CODE)
+        camera?.stopPreview()
+        camera?.startPreview();
+        camera?.takePicture(null, null, photoHandler);
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            val extras = data?.getExtras()
-            val imageBitmap = extras?.get("data")
-            imageView?.setImageBitmap(imageBitmap as Bitmap?)
+    private fun findFrontFacingCamera(): Int {
+        var cameraId = -1
+        // Search for the front facing camera
+        val numberOfCameras = Camera.getNumberOfCameras()
+        for (i in 0..numberOfCameras - 1) {
+            val info = CameraInfo()
+            Camera.getCameraInfo(i, info)
+            if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+                Log.d(DEBUG_TAG, "Camera found")
+                cameraId = i
+                break
+            }
         }
+        return cameraId
+    }
+
+    override fun onPause() {
+        if (camera != null) {
+            camera?.release();
+            camera = null;
+        }
+        super.onPause();
+    }
+
+    companion object {
+        val DEBUG_TAG = "MakePhotoActivity"
     }
 }

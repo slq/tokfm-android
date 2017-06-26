@@ -7,22 +7,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
+import com.slq.tokfm.api.Podcast
+import java.net.URL
 
-class PodcastFragment : Fragment() {
+class PodcastFragment : Fragment(), FragmentWithProgress {
+
+    override fun progress(podcasts: List<Podcast>) {
+        val adapter = PodcastAdapter(context, podcasts)
+
+        val itemsListView = view.findViewById(R.id.list_view) as ListView
+        itemsListView.adapter = adapter
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_podcast, container, false)
 
-        val podcasts = listOf(
-                Podcast("Podcast1", "Long description 1"),
-                Podcast("Podcast2", "Very long description 2")
-        )
+        DownloadPodcastList(this).execute(URL("http://www.wp.pl"))
+//
+//        val podcasts = listOf(Podcast2(), Podcast2(), Podcast2())
+//        val adapter = PodcastAdapter(context, podcasts)
+//
+//        val itemsListView = view.findViewById(R.id.list_view) as ListView
+//        itemsListView.adapter = adapter
 
-        val adapter = PodcastAdapter(context, podcasts)
-
-        val itemsListView = view.findViewById(R.id.list_view) as ListView
-        itemsListView.adapter = adapter
 
         return view
     }

@@ -30,7 +30,8 @@ class MainActivity : Activity() {
 
             // Add the fragment to the 'fragment_container' FrameLayout
             fragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, firstFragment).commit()
+                    .add(R.id.fragment_container, firstFragment)
+                    .commit()
         }
     }
 }

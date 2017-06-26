@@ -41,8 +41,10 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:25.4.0'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation ('com.slq.tokfm:tokfm-parser:0.3.2') {
-        exclude group: 'org.json'
-        exclude group: 'org.apache.httpcomponents'
-    }
+//    implementation ('com.slq.tokfm:tokfm-parser:0.3.2') {
+//        exclude group: 'org.json'
+//        exclude group: 'org.apache.httpcomponents'
+//    }
+    api 'com.google.code.gson:gson:2.8.1'
+    api 'org.jsoup:jsoup:1.8.3'
 }

@@ -5,12 +5,33 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/published"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2017-06-26 18:00"
+        android:textAlignment="textEnd"
+        android:textAllCaps="false" />
+
+    <TextView
         android:id="@+id/podcast_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp"
+        android:text="Przewodnik technologiczny (Karolina Głowacka)"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/podcast_description"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="To nie ludzie dominują w internecie (powtórka programu)" />
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/podcast_series_description"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
+    <!---->
 </LinearLayout>

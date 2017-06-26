@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import com.slq.tokfm.api.Podcast
 
 
 class PodcastAdapter(private val context: Context, private val items: List<Podcast>) : BaseAdapter() {
@@ -30,10 +29,15 @@ class PodcastAdapter(private val context: Context, private val items: List<Podca
         // get the TextView for item name and item description
         val podcastName = view.findViewById(R.id.podcast_name) as TextView
         val podcastDescription = view.findViewById(R.id.podcast_description) as TextView
+        val published = view.findViewById(R.id.published) as TextView
+//        val podcastSeriesDescription = view.findViewById(R.id.podcast_series_description) as TextView
 
         //sets the text for item name and item description from the current item object
-        podcastName.text = currentItem.name
-        podcastDescription.text = currentItem.seriesName
+        val title = "${currentItem.series_name} (${currentItem.user_name})"
+        podcastDescription.text = title
+        podcastName.text = currentItem.podcast_name
+        published.text = currentItem.podcast_emission_text
+//        podcastSeriesDescription.text = currentItem.series_description
 
         // returns the view for the current row
         return view

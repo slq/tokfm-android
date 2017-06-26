@@ -18,7 +18,7 @@ buildscript {
 allprojects {
     repositories {
 //        maven { url  "http://dl.bintray.com/slq/maven" }
-        mavenLocal()
+//        mavenLocal()
         jcenter()
         mavenCentral()
         google()

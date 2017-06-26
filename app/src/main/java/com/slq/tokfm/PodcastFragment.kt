@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
-import com.slq.tokfm.api.Podcast
 import java.net.URL
 
 class PodcastFragment : Fragment(), FragmentWithProgress {
@@ -24,13 +23,6 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
         val view = inflater.inflate(R.layout.fragment_podcast, container, false)
 
         DownloadPodcastList(this).execute(URL("http://www.wp.pl"))
-//
-//        val podcasts = listOf(Podcast2(), Podcast2(), Podcast2())
-//        val adapter = PodcastAdapter(context, podcasts)
-//
-//        val itemsListView = view.findViewById(R.id.list_view) as ListView
-//        itemsListView.adapter = adapter
-
 
         return view
     }

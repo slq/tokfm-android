@@ -2,7 +2,9 @@ package com.slq.tokfm
 
 
 import android.app.Fragment
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +26,20 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
             val podcast = parent.getItemAtPosition(position) as Podcast
             Log.d("PodcastFragment", "Item clicked $podcast")
 
-            
+
+
+            val permission = ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // We don't have permission so prompt the user
+                val REQUEST_EXTERNAL_STORAGE = 0
+                ActivityCompat.requestPermissions(
+                        activity,
+                        arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        REQUEST_EXTERNAL_STORAGE
+                )
+            }
+
             PodcastService.downlaod(context, podcast)
         }
     }

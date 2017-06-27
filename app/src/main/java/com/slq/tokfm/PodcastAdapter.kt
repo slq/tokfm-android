@@ -46,4 +46,5 @@ class PodcastAdapter(private val context: Context, private val items: List<Podca
         // returns the view for the current row
         return view
     }
+
 }

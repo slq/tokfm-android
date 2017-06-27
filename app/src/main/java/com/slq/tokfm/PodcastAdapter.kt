@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
 
 
@@ -31,6 +32,8 @@ class PodcastAdapter(private val context: Context, private val items: List<Podca
         val podcastDescription = view.findViewById(R.id.podcast_description) as TextView
         val published = view.findViewById(R.id.published) as TextView
 //        val podcastSeriesDescription = view.findViewById(R.id.podcast_series_description) as TextView
+        val podcastImage = view.findViewById(R.id.podcast_image) as ImageView
+
 
         //sets the text for item name and item description from the current item object
         val title = "${currentItem.series_name} (${currentItem.user_name})"
@@ -38,6 +41,7 @@ class PodcastAdapter(private val context: Context, private val items: List<Podca
         podcastName.text = currentItem.podcast_name
         published.text = currentItem.podcast_emission_text
 //        podcastSeriesDescription.text = currentItem.series_description
+        podcastImage.setImageBitmap(currentItem.podcast_image)
 
         // returns the view for the current row
         return view

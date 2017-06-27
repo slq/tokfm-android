@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 
 object PodcastService {
     fun listPodcasts() : List<Podcast> {
-        val pageNum = 1
+        val pageNum = 0
         val url = "http://audycje.tokfm.pl/podcasts?offset=$pageNum"
         Log.d("PODCAST", "URL: $url")
         val json = Jsoup.connect(url).ignoreContentType(true).execute().body()

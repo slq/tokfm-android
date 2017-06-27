@@ -11,6 +11,9 @@ class DownloadPodcastList(val fragment: FragmentWithProgress) : AsyncTask<URL, I
         publishProgress(0)
         Log.d("AsyncTask", "Before downloading")
         val podcasts = PodcastService.listPodcasts()
+        podcasts.forEach {
+            it.downloadPodcastImage()
+        }
         Log.d("AsyncTask", "After downloading")
         publishProgress(100)
         return podcasts

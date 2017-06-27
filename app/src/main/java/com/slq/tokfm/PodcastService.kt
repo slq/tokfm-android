@@ -1,8 +1,11 @@
 package com.slq.tokfm
 
-import android.content.Context
 import android.os.Environment
 import android.util.Log
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.Transformation
+import android.widget.ProgressBar
 import com.android.volley.Response
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.Volley
@@ -28,10 +31,13 @@ object PodcastService {
         return container.records
     }
 
-    fun downlaod(context: Context, podcast: Podcast) {
+    fun downlaod(view: View, podcast: Podcast) {
         Log.d("PodcastService", "Downloading started $podcast")
 
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), "${podcast.podcast_id}.mp3")
+        val directory = File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)}/TokFM")
+        directory.mkdirs()
+
+        val file = File(directory, podcast.targetFilename)
         val hexTime = currentTimeSecondsToHex()
         val audioName = podcast.podcast_audio
         val digest = digest(hexTime, audioName)
@@ -42,10 +48,15 @@ object PodcastService {
         val responseListener = Response.Listener<ByteArray> {
             file.writeBytes(it)
             Log.d("Podcast Service", "Download complete. File saved at $file")
+            val progressBar = view.findViewById(R.id.progressBar) as ProgressBar
+            progressBar.isIndeterminate = false
+            val anim = ProgressBarAnimation(progressBar, 0f, 100f)
+            anim.duration = 1000
+            progressBar.startAnimation(anim)
         }
 
         val request = ByteRequest(uri, responseListener)
-        val queue = Volley.newRequestQueue(context, HurlStack());
+        val queue = Volley.newRequestQueue(view.context, HurlStack());
         queue.add(request);
 
         Log.d("PodcastService", "Downloading queued at Volley $podcast")
@@ -59,5 +70,13 @@ object PodcastService {
         val message = "MwbJdy3jUC2xChua/$audioName$n".toByteArray()
         val md5 = MessageDigest.getInstance("MD5")
         return md5.digest(message)
+    }
+
+    class ProgressBarAnimation(private val progressBar: ProgressBar, private val from: Float, private val to: Float) : Animation() {
+        override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
+            super.applyTransformation(interpolatedTime, t)
+            val value = from + (to - from) * interpolatedTime
+            progressBar.progress = value.toInt()
+        }
     }
 }

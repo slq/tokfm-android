@@ -31,15 +31,16 @@ class PodcastAdapter(private val context: Context, private val items: List<Podca
         val podcastName = view.findViewById(R.id.podcast_name) as TextView
         val podcastDescription = view.findViewById(R.id.podcast_description) as TextView
         val published = view.findViewById(R.id.published) as TextView
+        val size = view.findViewById(R.id.size) as TextView
 //        val podcastSeriesDescription = view.findViewById(R.id.podcast_series_description) as TextView
         val podcastImage = view.findViewById(R.id.podcast_image) as ImageView
 
 
         //sets the text for item name and item description from the current item object
-        val title = "${currentItem.series_name} (${currentItem.user_name})"
-        podcastDescription.text = title
+        podcastDescription.text = currentItem.series_name
         podcastName.text = currentItem.podcast_name
         published.text = currentItem.podcast_emission_text
+        size.text = currentItem.podcast_size_mb
 //        podcastSeriesDescription.text = currentItem.series_description
         podcastImage.setImageBitmap(currentItem.podcast_image)
 

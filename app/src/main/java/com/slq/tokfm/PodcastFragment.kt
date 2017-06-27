@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.ProgressBar
 import java.net.URL
 
 class PodcastFragment : Fragment(), FragmentWithProgress {
@@ -26,8 +27,6 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
             val podcast = parent.getItemAtPosition(position) as Podcast
             Log.d("PodcastFragment", "Item clicked $podcast")
 
-
-
             val permission = ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
             if (permission != PackageManager.PERMISSION_GRANTED) {
@@ -40,7 +39,10 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
                 )
             }
 
-            PodcastService.downlaod(context, podcast)
+            val progressBar = view.findViewById(R.id.progressBar) as ProgressBar
+            progressBar.visibility = View.VISIBLE
+
+            PodcastService.downlaod(view, podcast)
         }
     }
 

@@ -4,10 +4,17 @@
     android:layout_height="match_parent"
     tools:context="com.slq.tokfm.PodcastFragment">
 
-    <ListView
-        android:id="@+id/list_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"/>
+        android:layout_margin="20dp">
+
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>

@@ -2,19 +2,20 @@ package com.slq.tokfm
 
 
 import android.app.Fragment
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
-import android.widget.AdapterView
 import android.widget.ListView
-import android.widget.ProgressBar
 
 class PodcastFragment : Fragment(), FragmentWithProgress {
+
+    var listView: ListView? = null
+    var swipeRefresh: SwipeRefreshLayout? = null
 
     var podcasts: MutableList<Podcast> = arrayListOf()
     var downloadRunning = false
@@ -24,39 +25,18 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
         val adapter = PodcastAdapter(context, podcasts)
         val fragment = this
 
-        val itemsListView = view.findViewById(R.id.list_view) as ListView
-        itemsListView.adapter = adapter
-        itemsListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            Log.d("PodcastFragment", "Item clicked at position $position")
+        swipeRefresh?.isRefreshing = false
 
-            val podcast = parent.getItemAtPosition(position) as Podcast
-            Log.d("PodcastFragment", "Item clicked $podcast")
+        listView?.adapter = adapter
+        listView?.onItemClickListener = DownloadPodcastOnClickListener(activity)
 
-            val permission = ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                // We don't have permission so prompt the user
-                val REQUEST_EXTERNAL_STORAGE = 0
-                ActivityCompat.requestPermissions(
-                        activity,
-                        arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        REQUEST_EXTERNAL_STORAGE
-                )
-            }
-
-            val progressBar = view.findViewById(R.id.progressBar) as ProgressBar
-            progressBar.visibility = View.VISIBLE
-
-            PodcastService.downlaod(view, podcast)
-        }
-
-        itemsListView.setOnScrollListener(object : AbsListView.OnScrollListener {
+        listView?.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
                 Log.d("Scroll Listener", "Scroll state changed! $scrollState")
             }
 
             override fun onScroll(absView: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                Log.d("Scroll Listener", "first visible item: $firstVisibleItem, visible count: $visibleItemCount, total count: $totalItemCount")
+//                Log.d("Scroll Listener", "first visible item: $firstVisibleItem, visible count: $visibleItemCount, total count: $totalItemCount")
                 if (firstVisibleItem + visibleItemCount == totalItemCount
                         && totalItemCount != 0
                         && !downloadRunning) {
@@ -69,9 +49,8 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
     }
 
     override fun loadMore(podcasts: MutableList<Podcast>) {
-        val itemsListView = view.findViewById(R.id.list_view) as ListView
-        itemsListView.requestLayout()
-        val adapter = itemsListView.adapter as PodcastAdapter
+        listView?.requestLayout()
+        val adapter = listView?.adapter as PodcastAdapter
 
         this.podcasts.addAll(podcasts)
         adapter.notifyDataSetChanged()
@@ -84,9 +63,29 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_podcast, container, false)
 
-        DownloadPodcastList(this).execute()
+        listView = view.findViewById(R.id.list) as ListView
+
+        swipeRefresh = view.findViewById(R.id.swiperefresh) as SwipeRefreshLayout
+        swipeRefresh?.setColorSchemeColors(ContextCompat.getColor(context, R.color.swipe_color_1),
+                ContextCompat.getColor(context, R.color.swipe_color_2),
+                ContextCompat.getColor(context, R.color.swipe_color_3),
+                ContextCompat.getColor(context, R.color.swipe_color_4))
 
         return view
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val fragment = this
+
+        DownloadPodcastList(fragment).execute()
+
+        swipeRefresh?.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                DownloadPodcastList(fragment).execute()
+            }
+        })
     }
 
 }

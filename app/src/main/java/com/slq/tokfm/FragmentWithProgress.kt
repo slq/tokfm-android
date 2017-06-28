@@ -2,5 +2,6 @@ package com.slq.tokfm
 
 interface FragmentWithProgress {
 
-    fun progress(podcasts: List<Podcast>)
+    fun progress(podcasts: MutableList<Podcast>)
+    fun loadMore(podcasts: MutableList<Podcast>)
 }

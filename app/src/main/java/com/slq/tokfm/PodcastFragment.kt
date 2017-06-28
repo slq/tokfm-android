@@ -9,15 +9,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.ProgressBar
-import java.net.URL
 
 class PodcastFragment : Fragment(), FragmentWithProgress {
 
-    override fun progress(podcasts: List<Podcast>) {
+    var podcasts: MutableList<Podcast> = arrayListOf()
+    var downloadRunning = false
+
+    override fun progress(podcastList: MutableList<Podcast>) {
+        podcasts = podcastList
         val adapter = PodcastAdapter(context, podcasts)
+        val fragment = this
 
         val itemsListView = view.findViewById(R.id.list_view) as ListView
         itemsListView.adapter = adapter
@@ -44,13 +49,42 @@ class PodcastFragment : Fragment(), FragmentWithProgress {
 
             PodcastService.downlaod(view, podcast)
         }
+
+        itemsListView.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
+                Log.d("Scroll Listener", "Scroll state changed! $scrollState")
+            }
+
+            override fun onScroll(absView: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+                Log.d("Scroll Listener", "first visible item: $firstVisibleItem, visible count: $visibleItemCount, total count: $totalItemCount")
+                if (firstVisibleItem + visibleItemCount == totalItemCount
+                        && totalItemCount != 0
+                        && !downloadRunning) {
+                    Log.d("Scroll Listener", "Trying to load more podcasts (current count $totalItemCount)")
+                    downloadRunning = true
+                    DownloadMorePodcasts(fragment).execute(totalItemCount)
+                }
+            }
+        })
+    }
+
+    override fun loadMore(podcasts: MutableList<Podcast>) {
+        val itemsListView = view.findViewById(R.id.list_view) as ListView
+        itemsListView.requestLayout()
+        val adapter = itemsListView.adapter as PodcastAdapter
+
+        this.podcasts.addAll(podcasts)
+        adapter.notifyDataSetChanged()
+        downloadRunning = false
+
+        Log.d("PodcastFragment", "Loaded ${podcasts.size} podcasts more (total ${this.podcasts.size}")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_podcast, container, false)
 
-        DownloadPodcastList(this).execute(URL("http://www.wp.pl"))
+        DownloadPodcastList(this).execute()
 
         return view
     }

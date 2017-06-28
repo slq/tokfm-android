@@ -3,19 +3,16 @@ package com.slq.tokfm
 import android.os.AsyncTask
 import android.util.Log
 
-class DownloadPodcastList(val fragment: FragmentWithProgress) : AsyncTask<Void, Int, MutableList<Podcast>>() {
+class DownloadMorePodcasts(val fragment: FragmentWithProgress) : AsyncTask<Int, Int, MutableList<Podcast>>() {
 
-    override fun doInBackground(vararg params: Void?): MutableList<Podcast> {
+    override fun doInBackground(vararg params: Int?): MutableList<Podcast> {
         Log.d("AsyncTask", "Starting with params $params")
         publishProgress(0)
         Log.d("AsyncTask", "Before downloading")
-        val podcasts = PodcastService.listPodcasts()
-//        podcasts.forEach {
-//            it.downloadPodcastImage()
-//        }
+        val morePodcasts = PodcastService.loadMorePodcasts(params[0]!!)
         Log.d("AsyncTask", "After downloading")
         publishProgress(100)
-        return podcasts.toMutableList()
+        return morePodcasts.toMutableList()
     }
 
     override fun onProgressUpdate(vararg values: Int?) {
@@ -25,7 +22,7 @@ class DownloadPodcastList(val fragment: FragmentWithProgress) : AsyncTask<Void, 
     override fun onPostExecute(result: MutableList<Podcast>?) {
         Log.d("AsyncTask", "Downloaded ${result?.size} podcasts")
         if (result != null) {
-            fragment.progress(result)
+            fragment.loadMore(result)
         }
     }
 }

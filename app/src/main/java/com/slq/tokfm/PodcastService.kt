@@ -18,8 +18,8 @@ import java.security.MessageDigest
 
 
 object PodcastService {
-    fun listPodcasts(): List<Podcast> {
-        val pageNum = 0
+
+    fun listPodcasts(pageNum :Int = 0): List<Podcast> {
         val url = "http://audycje.tokfm.pl/podcasts?offset=$pageNum"
         Log.d("PodcastService", "URL: $url")
         val json = Jsoup.connect(url).ignoreContentType(true).execute().body()
@@ -79,4 +79,10 @@ object PodcastService {
             progressBar.progress = value.toInt()
         }
     }
+
+    fun loadMorePodcasts(podcastsCount: Int): List<Podcast> {
+        val nextPageNum = podcastsCount.div(10) + 1
+        return listPodcasts(nextPageNum)
+    }
+
 }

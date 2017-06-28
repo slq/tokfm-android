@@ -1,17 +1,17 @@
 package com.slq.tokfm
 
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Transformation
 import android.widget.ProgressBar
-import com.android.volley.Response
-import com.android.volley.toolbox.HurlStack
-import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import org.jsoup.Jsoup
 import java.io.File
+import java.io.IOException
 import java.lang.String.format
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -45,19 +45,36 @@ object PodcastService {
         val mdp = bigInt.toString(16).toLowerCase().padStart(32, '0')
         val uri = format("http://storage.tuba.fm/podcast/%s/%s/%s", mdp, hexTime, audioName)
 
-        val responseListener = Response.Listener<ByteArray> {
-            file.writeBytes(it)
-            Log.d("Podcast Service", "Download complete. File saved at $file")
-            val progressBar = view.findViewById(R.id.progressBar) as ProgressBar
-            progressBar.isIndeterminate = false
-            val anim = ProgressBarAnimation(progressBar, 0f, 100f)
-            anim.duration = 1000
-            progressBar.startAnimation(anim)
+        val mediaPlayer = MediaPlayer()
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        // Listen for if the audio file can't be prepared
+        mediaPlayer.setOnErrorListener(object : MediaPlayer.OnErrorListener {
+            override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
+                // ... react appropriately ...
+                // The MediaPlayer has moved to the Error state, must be reset!
+                return false
+            }
+        })
+        // Attach to when audio file is prepared for playing
+        mediaPlayer.setOnPreparedListener(object : MediaPlayer.OnPreparedListener {
+            override fun onPrepared(mp: MediaPlayer) {
+                mediaPlayer.start()
+            }
+        })
+        // Set the data source to the remote URL
+        // Trigger an async preparation which will file listener when completed
+        try {
+            mediaPlayer.setDataSource(uri)
+            mediaPlayer.prepareAsync() // might take long! (for buffering, etc)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-
-        val request = ByteRequest(uri, responseListener)
-        val queue = Volley.newRequestQueue(view.context, HurlStack());
-        queue.add(request);
 
         Log.d("PodcastService", "Downloading queued at Volley $podcast")
     }

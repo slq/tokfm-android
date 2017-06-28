@@ -29,6 +29,7 @@ class PodcastAdapter(private val context: Context, private val items: List<Podca
 
         // get the TextView for item name and item description
         val podcastName = view.findViewById(R.id.podcast_name) as TextView
+        val seriesName = view.findViewById(R.id.series_name) as TextView
         val podcastDescription = view.findViewById(R.id.podcast_description) as TextView
         val published = view.findViewById(R.id.published) as TextView
         val size = view.findViewById(R.id.size) as TextView
@@ -37,8 +38,13 @@ class PodcastAdapter(private val context: Context, private val items: List<Podca
 
 
         //sets the text for item name and item description from the current item object
-        podcastDescription.text = currentItem.series_name
+        seriesName.text = currentItem.series_name
         podcastName.text = currentItem.podcast_name
+        if(currentItem.podcast_description.isNotEmpty()) {
+            podcastDescription.text = currentItem.podcast_description
+        } else {
+            podcastDescription.visibility = View.GONE
+        }
         published.text = currentItem.podcast_emission_text
         size.text = currentItem.podcast_size_mb
 //        podcastSeriesDescription.text = currentItem.series_description

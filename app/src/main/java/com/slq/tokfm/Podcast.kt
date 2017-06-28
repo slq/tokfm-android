@@ -7,6 +7,7 @@ import java.util.regex.Pattern
 
 data class Podcast(val podcast_id: String,
                    val podcast_name: String,
+                   val podcast_description: String,
                    val series_name: String,
                    val series_description: String,
                    val podcast_audio: String,

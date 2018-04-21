@@ -84,5 +84,6 @@ public class PodcastFragment extends Fragment implements FragmentWithProgress<Po
     public void progress(List<Podcast> podcasts) {
         PodcastAdapter adapter = new PodcastAdapter(getContext(), podcasts);
         listView.setAdapter(adapter);
+        swipe.setRefreshing(false);
     }
 }

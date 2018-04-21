@@ -14,75 +14,51 @@ import com.slq.tokfm.model.PodcastContainer;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 public class PodcastService {
-    
+
     private static final String URL = "http://audycje.tokfm.pl/getsch";
+    private static final String PODCAST_LIST_URL = "http://audycje.tokfm.pl/js/podcasty?offset=%d&with_guests=false&with_leaders=false";
     private static final String PODCAST_DOWNLOAD_DETAILS_URL = "http://audycje.tokfm.pl/gets";
 
     private final Gson gson;
+    private final PodcastParser podcastParser;
 
-    public PodcastService(Gson gson) {
+    public PodcastService(Gson gson, PodcastParser podcastParser) {
         this.gson = gson;
+        this.podcastParser = podcastParser;
     }
 
-    public List<Podcast> listPodcasts() {
+    public List<Podcast> listPodcasts(int offset) {
         Log.i("Podcast service", "Starting listing...");
 
-        String body = "<empty>";
+        Document body;
+        String url = String.format(PODCAST_LIST_URL, offset);
         try {
-            body = Jsoup.connect(URL).ignoreContentType(true).execute().body();
+            body = Jsoup.connect(url).ignoreContentType(true).get();
         } catch (IOException e) {
             Log.e("Podcast service", "Failed to list podcasts", e);
+            return emptyList();
         }
 
-        Log.i("Podcast service", "Listing body content: " + body);
+        Log.i("Podcast service", "Listing body content");
 
-        PodcastContainer podcasts = gson.fromJson(body, PodcastContainer.class);
-        PodcastContainer removedPodcasts = filterEmptyPodcasts(podcasts);
-        PodcastContainer finalPodcasts = filterNonEmptyPodcasts(podcasts);
-
-        Log.i("Podcast service", "Parsed podcasts: " + podcasts);
-        Log.i("Podcast service", "Removed podcasts: " + removedPodcasts);
-        Log.i("Podcast service", "Final podcasts: " + finalPodcasts);
+        PodcastContainer podcasts = podcastParser.parse(body);
 
         Log.i("Podcast service", "Finished listing...");
 
-        return finalPodcasts.getSchedule();
+        return podcasts.getSchedule();
     }
 
-    private PodcastContainer filterEmptyPodcasts(PodcastContainer container) {
-        List<Podcast> podcasts = new LinkedList<>();
-        for (Podcast podcast : container.getSchedule()) {
-            if (podcast.getId() == null) {
-                podcasts.add(podcast);
-            }
-        }
-
-        PodcastContainer newContainer = new PodcastContainer();
-        newContainer.setSchedule(podcasts);
-        return newContainer;
-    }
-
-    private PodcastContainer filterNonEmptyPodcasts(PodcastContainer container) {
-        List<Podcast> podcasts = new LinkedList<>();
-        for (Podcast podcast : container.getSchedule()) {
-            if (podcast.getId() != null) {
-                podcasts.add(podcast);
-            }
-        }
-
-        PodcastContainer newContainer = new PodcastContainer();
-        newContainer.setSchedule(podcasts);
-        return newContainer;
-    }
 
     public void downloadPodcast(View view, Podcast podcast) {
         Log.i("Podcast service", "Starting downloading of podcast: " + podcast + "...");

@@ -9,8 +9,8 @@
         android:id="@+id/podcast_image"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:srcCompat="@android:drawable/btn_star"
-        android:visibility="visible"/>
+        android:visibility="gone"
+        app:srcCompat="@android:drawable/btn_star" />
 
     <TextView
         android:id="@+id/podcast_name"

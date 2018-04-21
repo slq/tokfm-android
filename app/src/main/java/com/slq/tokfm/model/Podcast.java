@@ -10,66 +10,51 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Podcast implements Comparable<Podcast>{
-
-    @SerializedName("podcast_id")
-    private Long id;
-
-    @SerializedName("podcast_name")
-    private String name;
-
-    @SerializedName("series_name")
-    private String seriesName;
-
-    @SerializedName("emission_time")
-    private String time;
-
-    @SerializedName("podcast_img")
+    private String id;
+    private String title;
+    private String series;
+    private String leader;
+    private String dateTime;
+    private String length;
     private String imageUrl;
-
     private Bitmap image;
 
-    public Long getId() {
+    public Podcast(String id, String title, String series, String leader, String dateTime, String length, String imageUrl) {
+        this.id = id;
+        this.title = title;
+        this.series = series;
+        this.leader = leader;
+        this.dateTime = dateTime;
+        this.length = length;
+        this.imageUrl = imageUrl;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getTitle() {
+        return title;
     }
 
-    public String getName() {
-        return name;
+    public String getSeries() {
+        return series;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getLeader() {
+        return leader;
     }
 
-    public String getSeriesName() {
-        return seriesName;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setSeriesName(String seriesName) {
-        this.seriesName = seriesName;
-    }
-
-    public String getSafeTime() {
-        return time != null ? time.replaceAll(":", "") : "-time-";
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
+    public String getLength() {
+        return length;
     }
 
     public String getImageUrl() {
         return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     public Bitmap getImage(){
@@ -82,7 +67,7 @@ public class Podcast implements Comparable<Podcast>{
 
     private Bitmap downloadImage() {
         try {
-            return BitmapFactory.decodeStream(new URL(getImageUrl()).openStream());
+            return BitmapFactory.decodeStream(new URL(imageUrl).openStream());
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -90,7 +75,7 @@ public class Podcast implements Comparable<Podcast>{
     }
 
     public String getTargetFilename() {
-        return String.format("%d - %s - %s - %s.mp3", id, getSafeTime(), seriesName, name);
+        return String.format("%s - %s - %s.mp3", dateTime, series, title);
     }
 
     @Override
@@ -105,9 +90,13 @@ public class Podcast implements Comparable<Podcast>{
     public String toString() {
         return "Podcast{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", seriesName='" + seriesName + '\'' +
-                ", time='" + time + '\'' +
+                ", title='" + title + '\'' +
+                ", series='" + series + '\'' +
+                ", leader='" + leader + '\'' +
+                ", dateTime='" + dateTime + '\'' +
+                ", length='" + length + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", image=" + image +
                 '}';
     }
 }

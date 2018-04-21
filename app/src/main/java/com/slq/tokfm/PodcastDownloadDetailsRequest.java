@@ -4,8 +4,8 @@ public class PodcastDownloadDetailsRequest {
     private String pid;
     private String st;
 
-    public PodcastDownloadDetailsRequest(Long id) {
-        pid = id.toString();
+    public PodcastDownloadDetailsRequest(String id) {
+        pid = id;
         st = "tokfm";
     }
 

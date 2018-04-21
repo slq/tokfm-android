@@ -1,11 +1,12 @@
 package com.slq.tokfm.model;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PodcastContainer {
 
-    private List<Podcast> schedule;
+    private List<Podcast> schedule = new LinkedList<>();
 
     public List<Podcast> getSchedule() {
         return schedule;
@@ -26,5 +27,13 @@ public class PodcastContainer {
         return "PodcastContainer{" +
                 "schedule=" + schedule +
                 '}';
+    }
+
+    public int size() {
+        return schedule.size();
+    }
+
+    public void add(Podcast podcast) {
+        schedule.add(podcast);
     }
 }

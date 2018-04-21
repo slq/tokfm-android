@@ -55,11 +55,11 @@ public class PodcastAdapter extends BaseAdapter {
         TextView size = view.findViewById(R.id.size);
         ImageView image = view.findViewById(R.id.podcast_image);
 
-        podcastName.setText(podcast.getName());
-        seriesName.setText(podcast.getSeriesName());
-        podcastDescription.setText(podcast.getName());
-        published.setText(podcast.getTime());
-        size.setText(podcast.getId().toString());
+        podcastName.setText(podcast.getTitle());
+        seriesName.setText(podcast.getSeries());
+        podcastDescription.setText(podcast.getLeader());
+        published.setText(podcast.getDateTime());
+        size.setText(podcast.getLength());
 //        image.setImageBitmap(podcast.getImage());
 
         return view;

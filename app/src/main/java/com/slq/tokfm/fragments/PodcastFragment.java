@@ -15,8 +15,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
-import com.slq.tokfm.DownloadPodcastDetails;
-import com.slq.tokfm.DownloadPodcastList;
+import com.slq.tokfm.PodcastParser;
+import com.slq.tokfm.task.DownloadPodcastAsyncTask;
+import com.slq.tokfm.task.ListPodcastsAsyncTask;
 import com.slq.tokfm.PodcastAdapter;
 import com.slq.tokfm.PodcastService;
 import com.slq.tokfm.R;
@@ -27,7 +28,8 @@ import java.util.List;
 public class PodcastFragment extends Fragment implements FragmentWithProgress<Podcast> {
 
     private final Gson gson = new Gson();
-    private final PodcastService service = new PodcastService(gson);
+    private final PodcastParser parser = new PodcastParser();
+    private final PodcastService service = new PodcastService(gson, parser);
 
     private ListView listView;
     private SwipeRefreshLayout swipe;
@@ -58,7 +60,7 @@ public class PodcastFragment extends Fragment implements FragmentWithProgress<Po
                 }
 
                 Podcast podcast = (Podcast) parent.getItemAtPosition(position);
-                new DownloadPodcastDetails(view, fragment, service).execute(podcast);
+                new DownloadPodcastAsyncTask(view, fragment, service).execute(podcast);
             }
         });
 
@@ -66,7 +68,7 @@ public class PodcastFragment extends Fragment implements FragmentWithProgress<Po
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new DownloadPodcastList(fragment, service).execute();
+                new ListPodcastsAsyncTask(fragment, service).execute();
             }
         });
 
@@ -75,7 +77,7 @@ public class PodcastFragment extends Fragment implements FragmentWithProgress<Po
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        new DownloadPodcastList(fragment, service).execute();
+        new ListPodcastsAsyncTask(fragment, service).execute();
     }
 
     @Override

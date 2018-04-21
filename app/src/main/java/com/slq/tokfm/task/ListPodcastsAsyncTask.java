@@ -1,20 +1,21 @@
-package com.slq.tokfm;
+package com.slq.tokfm.task;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.slq.tokfm.PodcastService;
 import com.slq.tokfm.fragments.PodcastFragment;
 import com.slq.tokfm.model.Podcast;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class DownloadPodcastList extends AsyncTask<Void, Integer, List<Podcast>> {
+public class ListPodcastsAsyncTask extends AsyncTask<Void, Integer, List<Podcast>> {
 
     private final PodcastFragment fragment;
     private final PodcastService service;
 
-    public DownloadPodcastList(PodcastFragment fragment, PodcastService service) {
+    public ListPodcastsAsyncTask(PodcastFragment fragment, PodcastService service) {
         this.fragment = fragment;
         this.service = service;
     }
@@ -24,7 +25,7 @@ public class DownloadPodcastList extends AsyncTask<Void, Integer, List<Podcast>>
         Log.i("List podcasts", "Starting listing...");
         publishProgress(0);
 
-        List<Podcast> podcasts = service.listPodcasts();
+        List<Podcast> podcasts = service.listPodcasts(0);
         publishProgress(100);
 
         return podcasts;

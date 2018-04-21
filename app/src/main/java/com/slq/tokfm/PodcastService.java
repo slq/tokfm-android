@@ -110,11 +110,6 @@ public class PodcastService {
         File directory = new File(parent, "TokFM");
         directory.mkdirs();
 
-        Log.i("Podcast service", "Directory exists? " + parent.exists());
-        Log.i("Podcast service", "Is directory? " + parent.isDirectory());
-        Log.i("Podcast service", "Directory exists? " + directory.exists());
-        Log.i("Podcast service", "Is directory? " + directory.isDirectory());
-
         final File file = new File(directory, podcast.getTargetFilename());
 
         Response.Listener<byte[]> responseListener = new Response.Listener<byte[]>() {

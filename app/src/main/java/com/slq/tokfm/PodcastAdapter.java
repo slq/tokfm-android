@@ -60,7 +60,7 @@ public class PodcastAdapter extends BaseAdapter {
         podcastDescription.setText(podcast.getName());
         published.setText(podcast.getTime());
         size.setText(podcast.getId().toString());
-        image.setImageBitmap(podcast.getImage());
+//        image.setImageBitmap(podcast.getImage());
 
         return view;
     }

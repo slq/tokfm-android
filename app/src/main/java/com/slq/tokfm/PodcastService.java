@@ -107,4 +107,10 @@ public class PodcastService {
 
         Log.d("PodcastService", "Downloading queued at Volley: " + podcast);
     }
+
+    public List<Podcast> loadMorePodcasts(Integer podcastsCount) {
+        int nextPageNum = podcastsCount / 10 + 1;
+        Log.i("Podcast service", "Requesting more podcasts with offset: " + nextPageNum);
+        return listPodcasts(nextPageNum);
+    }
 }

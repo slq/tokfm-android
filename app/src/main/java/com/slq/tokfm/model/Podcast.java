@@ -49,6 +49,13 @@ public class Podcast implements Comparable<Podcast>{
         return dateTime;
     }
 
+    public String getSafeDateTime() {
+        if(dateTime == null || dateTime.length() == 0 || !dateTime.contains(":")) {
+            return dateTime;
+        }
+        return dateTime.replace(":", "");
+    }
+
     public String getLength() {
         return length;
     }
@@ -75,7 +82,14 @@ public class Podcast implements Comparable<Podcast>{
     }
 
     public String getTargetFilename() {
-        return String.format("%s - %s - %s.mp3", dateTime, series, title);
+        String filename = String.format("%s - %s - %s.mp3", getSafeDateTime(), series, title);
+        return filename.replaceAll("\\?", ".")
+                .replaceAll("!", ".")
+                .replaceAll(": ", " - ")
+                .replaceAll(":", "-")
+                .replaceAll("\"", "")
+                .replaceAll("'", "")
+                .replaceAll("\\.\\.", ".");
     }
 
     @Override

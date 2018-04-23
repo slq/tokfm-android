@@ -42,8 +42,7 @@ public class PodcastAdapter extends BaseAdapter {
         View view = convertView;
 
         if (view == null) {
-            view = LayoutInflater.from(context)
-                    .inflate(R.layout.podcast_row, null);
+            view = LayoutInflater.from(context).inflate(R.layout.podcast_row, null);
         }
 
         Podcast podcast = (Podcast) getItem(position);
